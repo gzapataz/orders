@@ -51,10 +51,8 @@ class Order {
 var getByOrderNum = function(order, orderNum, callback) {
     pool.query('select * from "Order" where ordernumber = $1', [orderNum], function(err, result) {
         if (err) {
-            done(err);
             callback();
             console.log(err);
-            return res.status(500).json({ success: false, data: err });
         }
         order.id = result.rows[0].id;
         order.ordernumber = result.rows[0].ordernumber;
