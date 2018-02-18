@@ -21,8 +21,8 @@ class Refund {
                     recId = result.rows[0].id;
                     pool.query('select * from "Refund" where id = $1', [recId], function(err, result) {
                         if (err) {
-                            callback();
                             console.log(err);
+                            callback();
                             return res.status(500).json({ success: false, data: err });
                         }
                         callback(result);

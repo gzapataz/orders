@@ -5,7 +5,7 @@ var pg = require('pg');
 //Eliminar por variables de entorno
 var config = {
     user: 'postgres',
-    host: '172.17.0.1',
+    host: 'localhost',
     database: 'accountsvc',
     password: 'admin123',
     port: 5432,
