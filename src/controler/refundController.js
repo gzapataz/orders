@@ -14,13 +14,17 @@ var refundController = function() {
         var order = new Accounting.Order();
         console.log(JSON.stringify(req.body.Order.ordernumber));
         Accounting.getByOrderNum(order, req.body.Order.ordernumber, function(order) {
-            console.log(JSON.stringify(order));
-            var refund = new Accounting.Refund(null, order.id, 100);
+            console.log('OBJETO:' + JSON.stringify(order));
+            if (order) {
+                var refund = new Accounting.Refund(null, order.id, 100);
 
-            refund.save(function(result) {
-                res.status(201);
-                return res.json(result.rows[0]);
-            });
+                refund.save(function(result) {
+                    res.status(201);
+                    return res.json(result.rows[0]);
+                });
+            } else {
+                return res.status(404).send({ "message": "No se encontro la orden" });
+            }
         });
     };
     var getOrderById = function(req, res) {
