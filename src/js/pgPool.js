@@ -21,8 +21,8 @@ var poolPg = function() {
             return pool; // Si ya hay conexion devuelve la conexion
         }
         console.log('SINGLETON Creando pool de conexion a la base de datos');
-        pool = new pg.Pool();
-        //pool = new pg.Pool(config);
+        //pool = new pg.Pool();
+        pool = new pg.Pool(config);
         return pool;
     };
     return {
