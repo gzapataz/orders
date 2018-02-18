@@ -5,7 +5,7 @@ var pg = require('pg');
 //Eliminar por variables de entorno
 var config = {
     user: 'postgres',
-    host: 'localhost',
+    host: '172.17.0.1',
     database: 'accountsvc',
     password: 'admin123',
     port: 5432,
@@ -21,7 +21,8 @@ var poolPg = function() {
             return pool; // Si ya hay conexion devuelve la conexion
         }
         console.log('SINGLETON Creando pool de conexion a la base de datos');
-        pool = new pg.Pool(config);
+        pool = new pg.Pool();
+        //pool = new pg.Pool(config);
         return pool;
     };
     return {

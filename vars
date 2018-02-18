@@ -1,0 +1,5 @@
+export PGUSER=postgres
+export PGHOST=localhost
+export PGPASSWORD=admin123
+export PGDATABASE=accountsvc
+export PGPORT=5432 
