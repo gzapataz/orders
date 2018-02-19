@@ -10,6 +10,7 @@
     "author": "Gabriel Zapata",
     "license": "ISC",
     "dependencies": {
+        "amqplib": "^0.5.2",
         "body-parser": "^1.18.2",
         "cookie-parser": "^1.4.3",
         "ejs": "^2.5.7",
@@ -19,6 +20,7 @@
         "gulp": "^3.9.1",
         "jade": "^1.11.0",
         "jscs": "^3.0.7",
+        "nedb": "^1.8.0",
         "passport": "^0.4.0",
         "passport-local": "^1.0.0",
         "pg": "^6.4.2"

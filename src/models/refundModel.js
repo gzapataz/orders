@@ -49,17 +49,23 @@ class Order {
 
 
 var getByOrderNum = function(order, orderNum, callback) {
+    console.log('Consultando Orden ..' + orderNum);
     pool.query('select * from "Order" where ordernumber = $1', [orderNum], function(err, result) {
         if (err) {
-            console.log(err);
+            console.log('ERROR ' + err);
+            callback();
+            return;
+        }
+        if (result.rows[0]) {
+            order.id = result.rows[0].id;
+            order.ordernumber = result.rows[0].ordernumber;
+            order.customerid = result.rows[0].customerid;
+            order.date = result.rows[0].date;
+            order.status = result.rows[0].status;
+            callback(order);
+        } else {
             callback();
         }
-        order.id = result.rows[0].id;
-        order.ordernumber = result.rows[0].ordernumber;
-        order.customerid = result.rows[0].customerid;
-        order.date = result.rows[0].date;
-        order.status = result.rows[0].status;
-        callback(order);
     });
 
 };
