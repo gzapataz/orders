@@ -21,11 +21,13 @@ var allowCrossDomain = function(req, res, next) {
 
 amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
     try {
+        console.log('Conectando Cola...');
         conn.createChannel(function(err, ch) {
             var q = 'test';
             ch.assertQueue(q, { durable: false });
             ch.consume(q, function(msg) {
                 //message 
+                console.log('Insertando BD...' + msg.content.toString());
                 db.insert({
                     "message": msg.content.toString()
                 });
@@ -34,7 +36,7 @@ amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err
             console.log("Connection succesful");
         });
     } catch (err) {
-
+        console.log('Error Conectando Cola...' + err);
     }
 });
 

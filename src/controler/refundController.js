@@ -72,7 +72,7 @@ var refundController = function(db) {
                 });
             });
         } catch (err) {
-            return;
+            console.log('Error enviando cola ' + err);
         }
     }
 
