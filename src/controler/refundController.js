@@ -9,6 +9,14 @@ var amqp = require('amqplib/callback_api');
 var refundController = function(db) {
     var get = function(req, res) {
         var resp;
+        getQueue(function(msg) {
+            if (msg) {
+                console.log('Directo de la cola:' + JSON.stringify(msg));
+            }
+
+        });
+
+
         db.find({}, function(err, docs) {
             process(docs[0], function(result) {
                 console.log(JSON.stringify(result));
@@ -57,6 +65,30 @@ var refundController = function(db) {
                 });
             } else {
                 callback();
+            }
+        });
+    }
+
+    function getQueue(callback) {
+        amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
+            try {
+                console.log('Conectando Cola...');
+                conn.createChannel(function(err, ch) {
+                    var q = 'test';
+                    ch.assertQueue(q, { durable: false });
+                    ch.consume(q, function(msg) {
+                        //message 
+                        console.log('Insertando BD...' + msg.content.toString());
+                        db.insert({
+                            "message": msg.content.toString()
+                        });
+                        callback(msg.content);
+                    }, { noAck: true });
+
+                    console.log("Connection succesful");
+                });
+            } catch (err) {
+                console.log('Error Conectando Cola...' + err);
             }
         });
     }
