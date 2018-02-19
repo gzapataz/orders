@@ -10,9 +10,11 @@ var refundController = function(db) {
     var get = function(req, res) {
         var resp;
         getQueue(function(msg) {
+            console.log('Sali Callback:' + JSON.stringify(msg));
             if (msg) {
                 console.log('Directo de la cola:' + JSON.stringify(msg));
             }
+
 
         });
 
@@ -70,6 +72,7 @@ var refundController = function(db) {
     }
 
     function getQueue(callback) {
+        var msgOut;
         amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
             try {
                 console.log('Conectando Cola...');
@@ -78,11 +81,12 @@ var refundController = function(db) {
                     ch.assertQueue(q, { durable: false });
                     ch.consume(q, function(msg) {
                         //message 
-                        console.log('Insertando BD...' + msg.content.toString());
+                        console.log('Consumiendo de la cola...' + msg.content.toString());
+                        msgOut = msg;
                         db.insert({
                             "message": msg.content.toString()
                         });
-                        callback(msg.content);
+                        callback(msgOut);
                     }, { noAck: true });
 
                     console.log("Connection succesful");
