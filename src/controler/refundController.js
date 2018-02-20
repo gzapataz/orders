@@ -13,7 +13,7 @@ var refundController = function(db, cad) {
             console.log('Sali Callback:' + JSON.stringify(msg));
             if (msg) {
                 console.log('Directo de la cola:' + JSON.stringify(msg));
-                process(docs[0], function(result) {
+                process(msg, function(result) {
                     console.log(JSON.stringify(result));
                     if (result) {
                         sendQueue(result);
@@ -111,9 +111,9 @@ var refundController = function(db, cad) {
         });
     };
 
-    function sendQueue(refund) {
+    function sendQueue(cad, refund) {
         try {
-            amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
+            amqp.connect(cad, function(err, conn) {
                 conn.createChannel(function(err, ch) {
                     var q = 'test';
                     ch.assertQueue(q, { durable: false });
