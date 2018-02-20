@@ -11,8 +11,9 @@ var port = process.env.PORT || 5000;
 var app = express();
 
 var verNumber = '';
-var cad = 'amqp://test:test@' + process.env.API_QUEUE + ':5672';
-console.log('COLAS: ' + cad);
+var cadQueue = 'amqp://test:test@' + process.env.API_QUEUE + ':5672';
+
+console.log('COLAS: ' + cadQueue);
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -21,9 +22,7 @@ var allowCrossDomain = function(req, res, next) {
     next();
 };
 
-
-
-
+/*
 amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
     try {
         console.log('Conectando Cola...1');
@@ -44,7 +43,7 @@ amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err
         console.log('Error Conectando Cola...' + err);
     }
 });
-
+*/
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -52,15 +51,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(allowCrossDomain);
 
-require('amqplib/callback_api')
-    .connect('amqp://localhost', function(err, conn) {
-        if (err != null) return (err);
-        refundRouter = require('./src/routes/refundRouter')(db, conn);
-        app.use('/accounting/api', refundRouter);
-
-    });
-
-refundRouter = require('./src/routes/refundRouter')(db, cad);
+refundRouter = require('./src/routes/refundRouter')(db, cadQueue);
 app.use('/accounting/api', refundRouter);
 
 app.listen(port, function(err) {

@@ -13,9 +13,22 @@ var refundController = function(db, cad) {
             console.log('Sali Callback:' + JSON.stringify(msg));
             if (msg) {
                 console.log('Directo de la cola:' + JSON.stringify(msg));
+                process(docs[0], function(result) {
+                    console.log(JSON.stringify(result));
+                    if (result) {
+                        sendQueue(result);
+                        res.send({
+                            status: 200,
+                            mensaje: result
+                        });
+                    } else {
+                        res.send({
+                            status: 404,
+                            mensaje: '{ "message": "No se encontro la orden" }'
+                        });
+                    }
+                });
             }
-
-
         });
 
 
@@ -82,10 +95,11 @@ var refundController = function(db, cad) {
                     ch.consume(q, function(msg) {
                         //message 
                         console.log('Consumiendo de la cola...' + msg.content.toString());
-                        msgOut = msg;
+                        msgOut = msgmsg.content;
                         db.insert({
                             "message": msg.content.toString()
                         });
+                        console.log('getQueue:Contenido de la cola...' + msg.content.toString());
                         callback(msgOut);
                     }, { noAck: true });
 
