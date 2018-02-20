@@ -95,7 +95,7 @@ var refundController = function(db, cad) {
                     ch.consume(q, function(msg) {
                         //message 
                         console.log('Consumiendo de la cola...' + msg.content.toString());
-                        msgOut = msgmsg.content;
+                        msgOut = msg.content;
                         db.insert({
                             "message": msg.content.toString()
                         });
