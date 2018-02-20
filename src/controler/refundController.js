@@ -31,7 +31,7 @@ var refundController = function(db, cad) {
             }
         });
 
-
+        /*
         db.find({}, function(err, docs) {
             process(docs[0], function(result) {
                 console.log(JSON.stringify(result));
@@ -49,6 +49,7 @@ var refundController = function(db, cad) {
                 }
             });
         });
+        */
     }
     var post = function(req, res) {
 
