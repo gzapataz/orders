@@ -7,9 +7,9 @@ var pgPool = require('../js/pgPool');
 const pool = pgPool.getPool();
 var respRefund;
 
-var router = function(db, conn) {
+var router = function(db, cad) {
     var refundRouter = express.Router();
-    var refundController = require('../controler/refundController')(db, conn);
+    var refundController = require('../controler/refundController')(db, cad);
     refundRouter.route('/refund')
         .get(refundController.get)
         .post(refundController.post);

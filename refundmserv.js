@@ -3,14 +3,16 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var pgPool = require('./src/js/pgPool');
 var Datastore = require('nedb'),
-    db = new Datastore({ filename: './messages.db', autoload: true })
-    //amqp = require('amqplib/callback_api').connect(connect('amqp://test:test@' + process.env.API_QUEUE + ':5672'));
+    db = new Datastore({ filename: './messages.db', autoload: true }),
+    amqp = require('amqplib/callback_api');
 
 
 var port = process.env.PORT || 5000;
 var app = express();
 
 var verNumber = '';
+var cad = 'amqp://test:test@' + process.env.API_QUEUE + ':5672';
+console.log('COLAS: ' + cad);
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -19,7 +21,9 @@ var allowCrossDomain = function(req, res, next) {
     next();
 };
 
-/*
+
+
+
 amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
     try {
         console.log('Conectando Cola...1');
@@ -40,7 +44,7 @@ amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err
         console.log('Error Conectando Cola...' + err);
     }
 });
-*/
+
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -56,6 +60,8 @@ require('amqplib/callback_api')
 
     });
 
+refundRouter = require('./src/routes/refundRouter')(db, cad);
+app.use('/accounting/api', refundRouter);
 
 app.listen(port, function(err) {
     console.log('Running Server on Port ' + port);
