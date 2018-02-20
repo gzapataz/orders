@@ -100,7 +100,7 @@ var refundController = function(db, cad) {
                             "message": msg.content.toString()
                         });
                         console.log('getQueue:Contenido de la cola...' + msg.content.toString());
-                        callback(msgOut);
+                        callback(msg.content.toString());
                     }, { noAck: true });
 
                     console.log("Connection succesful");
