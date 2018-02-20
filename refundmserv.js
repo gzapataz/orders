@@ -3,8 +3,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var pgPool = require('./src/js/pgPool');
 var Datastore = require('nedb'),
-    db = new Datastore({ filename: './messages.db', autoload: true }),
-    amqp = require('amqplib/callback_api');
+    db = new Datastore({ filename: './messages.db', autoload: true })
+    //amqp = require('amqplib/callback_api').connect(connect('amqp://test:test@' + process.env.API_QUEUE + ':5672'));
 
 
 var port = process.env.PORT || 5000;
@@ -19,15 +19,16 @@ var allowCrossDomain = function(req, res, next) {
     next();
 };
 
+/*
 amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
     try {
-        console.log('Conectando Cola...');
+        console.log('Conectando Cola...1');
         conn.createChannel(function(err, ch) {
             var q = 'test';
             ch.assertQueue(q, { durable: false });
             ch.consume(q, function(msg) {
                 //message 
-                console.log('Insertando BD...' + msg.content.toString());
+                console.log('Insertando BD en 1...' + msg.content.toString());
                 db.insert({
                     "message": msg.content.toString()
                 });
@@ -39,6 +40,7 @@ amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err
         console.log('Error Conectando Cola...' + err);
     }
 });
+*/
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -46,8 +48,14 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 app.use(allowCrossDomain);
 
-refundRouter = require('./src/routes/refundRouter')(db);
-app.use('/accounting/api', refundRouter);
+require('amqplib/callback_api')
+    .connect('amqp://localhost', function(err, conn) {
+        if (err != null) return (err);
+        refundRouter = require('./src/routes/refundRouter')(db, conn);
+        app.use('/accounting/api', refundRouter);
+
+    });
+
 
 app.listen(port, function(err) {
     console.log('Running Server on Port ' + port);

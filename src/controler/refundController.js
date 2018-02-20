@@ -6,10 +6,10 @@ var Accounting = require('../models/refundModel');
 var OrderQuery = require('../models/refundModel');
 var amqp = require('amqplib/callback_api');
 
-var refundController = function(db) {
+var refundController = function(db, conn) {
     var get = function(req, res) {
         var resp;
-        getQueue(function(msg) {
+        getQueue(conn, function(msg) {
             console.log('Sali Callback:' + JSON.stringify(msg));
             if (msg) {
                 console.log('Directo de la cola:' + JSON.stringify(msg));
@@ -71,30 +71,29 @@ var refundController = function(db) {
         });
     }
 
-    function getQueue(callback) {
+    function getQueue(conn, callback) {
         var msgOut;
-        amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
-            try {
-                console.log('Conectando Cola...');
-                conn.createChannel(function(err, ch) {
-                    var q = 'test';
-                    ch.assertQueue(q, { durable: false });
-                    ch.consume(q, function(msg) {
-                        //message 
-                        console.log('Consumiendo de la cola...' + msg.content.toString());
-                        msgOut = msg;
-                        db.insert({
-                            "message": msg.content.toString()
-                        });
-                        callback(msgOut);
-                    }, { noAck: true });
+        //amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
+        try {
+            console.log('Conectando Cola...2');
+            conn.createChannel(function(err, ch) {
+                var q = 'test';
+                ch.assertQueue(q, { durable: false });
+                ch.consume(q, function(msg) {
+                    //message 
+                    console.log('Consumiendo de la cola...' + msg.content.toString());
+                    msgOut = msg;
+                    db.insert({
+                        "message": msg.content.toString()
+                    });
+                    callback(msgOut);
+                }, { noAck: true });
 
-                    console.log("Connection succesful");
-                });
-            } catch (err) {
-                console.log('Error Conectando Cola...' + err);
-            }
-        });
+                console.log("Connection succesful");
+            });
+        } catch (err) {
+            console.log('Error Conectando Cola...' + err);
+        }
     }
 
     function sendQueue(refund) {
