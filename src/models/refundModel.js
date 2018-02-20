@@ -57,6 +57,7 @@ var getByOrderNum = function(order, orderNum, callback) {
             return;
         }
         if (result.rows[0]) {
+            console.log('getByOrderNum: ' + result.rows[0]);
             order.id = result.rows[0].id;
             order.ordernumber = result.rows[0].ordernumber;
             order.customerid = result.rows[0].customerid;
@@ -64,6 +65,7 @@ var getByOrderNum = function(order, orderNum, callback) {
             order.status = result.rows[0].status;
             callback(order);
         } else {
+            console.log('getByOrderNum.Salio por Callback:' + JSON.stringify(result.rows));
             callback();
         }
     });
@@ -71,9 +73,7 @@ var getByOrderNum = function(order, orderNum, callback) {
 };
 
 module.exports = {
-        getByOrderNum: getByOrderNum,
-        Refund: Refund,
-        Order: Order
-    }
-    //module.exports = getByOrderNum;
-    //module.exports = Refund;
+    getByOrderNum: getByOrderNum,
+    Refund: Refund,
+    Order: Order
+}
