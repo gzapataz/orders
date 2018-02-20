@@ -13,6 +13,8 @@ var refundController = function(db, cad) {
             console.log('Sali Callback:' + JSON.stringify(msg));
             if (msg) {
                 console.log('Directo de la cola:' + JSON.stringify(msg));
+                var newMsg = JSON.parse(msg);
+                console.log('Decodificando:' + JSON.stringify(newMsg));
                 process(msg, function(result) {
                     console.log(JSON.stringify(result));
                     if (result) {
