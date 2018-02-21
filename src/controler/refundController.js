@@ -19,7 +19,7 @@ var refundController = function(db, cad) {
                 process(newMsg, newMsg.ItemsToRefund, function(err, result) {
                     console.log(JSON.stringify(result));
                     if (result) {
-                        sendQueue(result);
+                        sendQueue(cad, result);
                         res.send({
                             status: 200,
                             mensaje: result
