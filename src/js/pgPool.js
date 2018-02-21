@@ -25,7 +25,12 @@ var poolPg = function() {
         pool = new pg.Pool(config);
         return pool;
     };
+    var poolEnd = function() {
+        var pool = getPool();
+        pool.end();
+    };
     return {
+        poolEnd: poolEnd,
         getPool: getPool
     };
 };

@@ -57,3 +57,17 @@ app.use('/accounting/api', refundRouter);
 app.listen(port, function(err) {
     console.log('Running Server on Port ' + port);
 });
+
+
+
+process.on('SIGINT', () => {
+    console.log('\nCTRL+C...');
+    process.exit(0);
+});
+
+process.on('exit', (code) => {
+    console.log('Cerrando BD pool');
+    var pool = pgPool.getPool();
+    pool.end;
+    console.log(`About to exit with code: ${code}`);
+});
