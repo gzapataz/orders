@@ -15,7 +15,7 @@ var refundController = function(db, cad) {
                 console.log('Directo de la cola:' + JSON.stringify(msg));
                 var newMsg = JSON.parse(msg);
                 console.log('Decodificando:' + JSON.stringify(newMsg));
-                process(msg, function(result) {
+                process(newMsg, function(result) {
                     console.log(JSON.stringify(result));
                     if (result) {
                         sendQueue(result);
