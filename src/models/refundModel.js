@@ -18,14 +18,20 @@ class Refund {
         pool.query('INSERT INTO "Refund" ' +
             '(orderid, amount, tax, status, bantrxid) VALUES($1, $2, $3, $4, $5)  RETURNING id;', [this.orderid, this.amount, 0, this.estado, this.banktrxid],
             function(err, result) {
+                if (err) {
+                    console.log(err);
+                    callback();
+                }
                 if (result) {
                     recId = result.rows[0].id;
+                    console.log('BUSCAR Objet: ' + recId);
                     pool.query('select * from "Refund" where id = $1', [recId], function(err, result) {
                         if (err) {
                             console.log(err);
                             callback();
                             return res.status(500).json({ success: false, data: err });
                         }
+                        console.log('Inicnado Callback: ' + JSON.stringify(result));
                         callback(result);
                     });
                 }
@@ -54,7 +60,7 @@ var getByOrderNum = function(order, orderNum, callback) {
     pool.query('select * from "Order" where ordernumber = $1', [orderNum], function(err, result) {
         if (err) {
             console.log('ERROR ' + err);
-            callback();
+            callback(err, null);
             return;
         }
         console.log('getByOrderNum: ' + JSON.stringify(result));
@@ -65,7 +71,7 @@ var getByOrderNum = function(order, orderNum, callback) {
             order.customerid = result.rows[0].customerid;
             order.date = result.rows[0].date;
             order.status = result.rows[0].status;
-            callback(order);
+            callback(null, order);
         } else {
             console.log('getByOrderNum.Salio por Callback:' + JSON.stringify(result.rows));
             callback();
@@ -91,7 +97,7 @@ var getByLineid = function(orderline, orderid, lineid, callback) {
     pool.query('select * from "Orderitem" where id = $1 and orderid = $2', [lineid, orderid], function(err, result) {
         if (err) {
             console.log('getByLineid.ERROR ' + err);
-            callback(err);
+            callback(err, null);
             return;
         }
         if (result.rows[0]) {
@@ -102,7 +108,7 @@ var getByLineid = function(orderline, orderid, lineid, callback) {
             orderline.quantity = result.rows[0].quantity;
             orderline.unitprice = result.rows[0].unitprice;
             orderline.tax = result.rows[0].tax;
-            callback(orderline);
+            callback(null, orderline);
         } else {
             console.log('getByLineid.Salio por Callback:' + JSON.stringify(result.rows));
 

@@ -57,7 +57,7 @@ var refundController = function(db, cad) {
         var order = new Accounting.Order();
 
 
-        Accounting.getByOrderNum(order, request.Order.ordernumber, function(order) {
+        Accounting.getByOrderNum(order, request.Order.ordernumber, function(err, order) {
             console.log('OBJETO:' + JSON.stringify(order));
             if (order) {
                 var total = 0;
@@ -88,16 +88,16 @@ var refundController = function(db, cad) {
                             });
                         }).then(lineatotal => {
                             total = total + lineatotal;
-                            console.log('Saliendo de promesa:' + total);
                             var refund = new Accounting.Refund(null, order.id, total);
+                            console.log('Saliendo de promesa:' + JSON.stringify(refund));
                             refund.save(function(result) {
                                 //Aqui los items y calculo del total
-                                callback(result.rows[0]);
+                                callback(null, result.rows[0]);
                             });
                         })
                         .catch(err => {
                             console.log('Promesa Error' + err);
-                            callback(err);
+                            callback(err, null);
                         });
                 };
             } else {
