@@ -4,7 +4,7 @@ const pool = pgPool.getPool();
 
 pool.query(
     'DROP TABLE IF EXISTS "Customer";' +
-    'CREATE TABLE "Customer"(id SERIAL PRIMARY KEY, name VARCHAR(15), identification VARCHAR(15), email VARCHAR(30), city VARCHAR(30), address VARCHAR(30), mobile VARCHAR(30));' +
+    'CREATE TABLE Customer (id SERIAL PRIMARY KEY, name VARCHAR(15), identification VARCHAR(15), email VARCHAR(30), city VARCHAR(30), address VARCHAR(30), mobile VARCHAR(30));' +
     'DROP TABLE IF EXISTS "Order";' +
     'CREATE TABLE "Order"(id SERIAL PRIMARY KEY, customerid SERIAL, ordernumber VARCHAR(15), date timestamp, status VARCHAR(20));' +
     'DROP TABLE IF EXISTS "Orderitem";' +
