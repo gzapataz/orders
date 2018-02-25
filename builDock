@@ -1,0 +1,18 @@
+#!/bin/sh
+echo 'Borrandoo...'
+rm directorios.tar.gz
+echo 'Comprimiendo...'
+tar -czf directorios.tar.gz .
+echo 'Buildo...'
+docker build -t kubernetes-accountms:v1 .
+echo 'Reg....'
+docker tag kubernetes-accountms:v1 $DOCKER_ID_USER/accountms
+echo 'PUSH....'
+docker push $DOCKER_ID_USER/accountms
+echo 'Deploy...'
+cd ./deployments
+kubectl apply -f accountms.yml
+cd ../
+systemctl restart docker && systemctl restart kubelet
+kubectl get pods
+kubectl logs accountms-svc-fbc8c556c-rdsf8
