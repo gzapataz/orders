@@ -43,12 +43,12 @@ var refundController = function(db, cad) {
                 process(req.body, req.body.ItemsToRefund, function (err, result) {
                     console.log(JSON.stringify(result));
                     if (result) {
-                        res.send({
+                        res.status(200).send({
                             status: 200,
                             mensaje: result
                         });
                     } else {
-                        res.send({
+                        res.status(404).send({
                             status: 404,
                             mensaje: '{ "message": "No se encontro la orden o los items de la orden" }'
                         });
@@ -59,15 +59,21 @@ var refundController = function(db, cad) {
                 console.log('req.body.correlationId:' + req.body.correlationId);
                 processcompensar(req.body.correlationId, function (err, result) {
                     console.log(JSON.stringify(result));
+                    if (err) {
+                        res.status(404).send({
+                            status: 404,
+                            mensaje: '{ "message": "Error en deshacer reembolso" }'
+                        });
+                    }
                     if (result) {
-                        res.send({
+                        res.status(200).send({
                             status: 200,
                             mensaje: result
                         });
                     } else {
-                        res.send({
+                        res.status(404).send({
                             status: 404,
-                            mensaje: '{ "message": "No se encontro la orden o los items de la orden" }'
+                            mensaje: '{ "message": "No se encontro la orden o el reembolso" }'
                         });
                     }
                 });
@@ -119,11 +125,15 @@ var refundController = function(db, cad) {
 
     function processcompensar(correlationid, callback) {
         var refundCancelObj = new Accounting.Refund();
-        refundCancelObj.cancelCompensation(correlationid, function(err, result){
+        refundCancelObj.cancelCompensation(correlationid, function(err, result) {
             if (err) {
-                callback (JSON.parse('{"compensation": "failure"}'), )
+                callback (err, JSON.parse('{"compensation": "failure"}'));
             }
-            callback(null, JSON.parse('{"compensation": "success"}'));
+            if (result) {
+                callback(null, JSON.parse('{"compensation": "success"}'));
+            } else {
+                callback ();
+            }
         });
     }
 

@@ -40,15 +40,19 @@ class Refund {
     }
     cancelCompensation(correlationid, callback) {
         console.log('cancelCompensation.req.body.correlationId:' + correlationid);
-        //var query = 'select * from "Refund" where correlationid = \'' + correlationid + '\'';
         var query = 'update "Refund" set status = \'Cancelado\' where correlationid = \'' + correlationid + '\'';
-        //pool.query('select * from "Refund" where correlationid = $1', [correlationid], function(err, result) {
         pool.query(query, function(err, result) {
             if (err) {
                 console.log('ERROR:' + err);
                 callback(err, null);
             }
-            callback(null, result);
+            console.log('DATAREFUND:' + JSON.stringify(result));
+            if (result.rowCount > 0) {
+                callback(null, result);
+            } else {
+                console.log('ERROR NO DATA:' + err);
+                callback(err, null);
+            }
         });
     }
 }
