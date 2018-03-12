@@ -1,0 +1,59 @@
+/* global AWS*/
+var doc = require('dynamodb-doc');
+var dynamodb = doc.DynamoDB();
+
+console.log('Tax Calculation function');
+
+exports.handler = function(event, context, callback){
+    var params;
+    console.log('Evento:' + JSON.stringify(event.body));
+    var body = JSON.parse(event.body);
+    console.log('event.body.Pais ' + body.Pais);
+    console.log('event.body.Estado ' + body.Estado);
+    console.log('event.body.productid ' + body.productid);
+    console.log('Metodos:' + event.httpMethod);
+    switch (event.httpMethod) {
+        case 'POST':
+
+            var params = {
+                TableName: "Taxes",
+                KeyConditionExpression: "Pais = :pais",
+                FilterExpression: "Estado = :estado and productid = :producto",
+                ExpressionAttributeValues: {
+                    ":pais": body.Pais,
+                    ":estado": body.Estado,
+                    ":producto": body.productid,
+                }
+            }
+            dynamodb.query(params, function(err, data) {
+                if (err) {
+                    console.log(err, err.stack); // an error occurred
+                }
+                else     {
+                    console.log('RETORMO:' + JSON.stringify(data));
+                    if (data.Items) {
+                        callback(null, {
+                            statusCode: 200,
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify('{"porcentaje":' + data.Items[0].Valor + '}')
+                        });
+                    }
+                    else {
+                        callback(null, {
+                            statusCode: 400,
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({"message":"Empty Table"})
+                        });
+                    }
+                }
+            });
+            break;
+        default:
+            callback(null, {
+                statusCode: 400,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({"resp":`Unsupported method "${event.httpMethod}"`})
+            });
+    }
+
+};
