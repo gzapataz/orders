@@ -1,8 +1,8 @@
 {
-    "name": "msrefundsrv",
+    "name": "msordersrv",
     "version": "1.0.0",
     "description": "Microservicio para reembolsos",
-    "main": "refundmserv.js",
+    "main": "ordermserv.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node app.js"

@@ -40,7 +40,7 @@ gulp.task('inject', function() {
 
 gulp.task('serve', ['style', 'inject'], function() {
     var options = {
-        script: 'refundmserv.js',
+        script: 'ordermserv.js',
         delayTime: 1,
         env: {
             'PORT': 5000

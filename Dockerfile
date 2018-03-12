@@ -9,4 +9,4 @@ RUN chmod 777 vars
 CMD ./vars
 CMD echo $PGHOST
 RUN npm install
-CMD node refundmserv.js 
+CMD node ordermserv.js

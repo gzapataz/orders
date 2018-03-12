@@ -3,21 +3,20 @@
 var pgPool = require('../js/pgPool');
 const pool = pgPool.getPool();
 
-class Refund {
-    constructor(id, orderid, amount, correlationid) {
+class Order {
+    constructor(id, customerid, ordernumber, datenow, correlationid) {
         this.id = id;
-        this.orderid = orderid
-        this.amount = amount;
-        this.banktrxid = 'Pending';
-        this.estado = 'En proceso';
-        this.correlationid = correlationid;
+        this.customerid = customerid;
+        this.ordernumber = ordernumber;
+        this.date = datenow;
+        this.status = 'Pendiente';
+        this.correlationid = correlationid
     }
     save(callback) {
         var result = {};
         var recId;
-        console.log('this.amount:' + this.amount);
-        pool.query('INSERT INTO "Refund" ' +
-            '(orderid, amount, tax, status, bantrxid, correlationid) VALUES($1, $2, $3, $4, $5, $6)  RETURNING id;', [this.orderid, this.amount, 0, this.estado, this.banktrxid, this.correlationid],
+        pool.query('INSERT INTO "Order" ' +
+            '(customerid, ordernumber, date, status, correlationid) VALUES($1, $2, $3, $4, $5)  RETURNING id;', [this.customerid, this.ordernumber, this.date, this.status, this.correlationid],
             function(err, result) {
                 if (err) {
                     console.log(err);
@@ -26,7 +25,7 @@ class Refund {
                 if (result) {
                     recId = result.rows[0].id;
                     console.log('BUSCAR Objet: ' + recId);
-                    pool.query('select * from "Refund" where id = $1', [recId], function(err, result) {
+                    pool.query('select * from "Order" where id = $1', [recId], function(err, result) {
                         if (err) {
                             console.log(err);
                             callback();
@@ -40,13 +39,13 @@ class Refund {
     }
     cancelCompensation(correlationid, callback) {
         console.log('cancelCompensation.req.body.correlationId:' + correlationid);
-        var query = 'update "Refund" set status = \'Cancelado\' where correlationid = \'' + correlationid + '\'';
+        var query = 'update "Order" set status = \'Cancelado\' where correlationid = \'' + correlationid + '\'';
         pool.query(query, function(err, result) {
             if (err) {
                 console.log('ERROR:' + err);
                 callback(err, null);
             }
-            console.log('DATAREFUND:' + JSON.stringify(result));
+            console.log('DATAORDER:' + JSON.stringify(result));
             if (result.rowCount > 0) {
                 callback(null, result);
             } else {
@@ -56,19 +55,6 @@ class Refund {
         });
     }
 }
-
-class Order {
-    constructor(id, orderid, amount) {
-        this.id = id;
-        this.ordernumber = '';
-        this.orderid = orderid;
-        this.amount = amount;
-        this.banktrxid = '';
-        this.estado = 'Pendiente';
-    }
-}
-
-//module.exports = Order;
 
 
 var getByOrderNum = function(order, orderNum, callback) {
@@ -97,7 +83,7 @@ var getByOrderNum = function(order, orderNum, callback) {
 };
 
 class Orderitem {
-    constructor(id, orderid, productid, quantity, unitprice, tax, linetotal) {
+    constructor(id, orderid, productid, quantity, unitprice, tax, linetotal, status) {
         this.id = id;
         this.orderid = orderid;
         this.productid = productid;
@@ -105,8 +91,36 @@ class Orderitem {
         this.unitprice = unitprice;
         this.tax = tax;
         this.linetotal = linetotal;
+        this.status = status;
+    }
+    save(callback) {
+        var result = {};
+        var recId;
+        pool.query('INSERT INTO "Orderitem" ' +
+            '(orderid, productid, quantity, unitprice, tax, linetotal, status) VALUES($1, $2, $3, $4, $5, $6, $7)  RETURNING id;', [this.orderid, this.productid, this.quantity, this.unitprice, this.tax, this.linetotal, this.status],
+            function(err, result) {
+                if (err) {
+                    console.log(err);
+                    callback();
+                }
+                if (result) {
+                    recId = result.rows[0].id;
+                    console.log('BUSCAR Objet: ' + recId);
+                    pool.query('select * from "Orderitem" where id = $1', [recId], function(err, result) {
+                        if (err) {
+                            console.log(err);
+                            callback();
+                            return res.status(500).json({ success: false, data: err });
+                        }
+                        console.log('Inicnado Callback: ' + JSON.stringify(result));
+                        callback(result);
+                    });
+                }
+            });
     }
 }
+
+
 
 var getByLineid = function(orderline, orderid, lineid, callback) {
     console.log('Consultando Items ..<' + orderid + '> LineItem<' + lineid + '>');
@@ -137,7 +151,6 @@ var getByLineid = function(orderline, orderid, lineid, callback) {
 module.exports = {
     getByOrderNum: getByOrderNum,
     getByLineid: getByLineid,
-    Refund: Refund,
+    Order: Order,
     Orderitem: Orderitem,
-    Order: Order
 }

@@ -22,37 +22,14 @@ var allowCrossDomain = function(req, res, next) {
     next();
 };
 
-/*
-amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
-    try {
-        console.log('Conectando Cola...1');
-        conn.createChannel(function(err, ch) {
-            var q = 'test';
-            ch.assertQueue(q, { durable: false });
-            ch.consume(q, function(msg) {
-                //message 
-                console.log('Insertando BD en 1...' + msg.content.toString());
-                db.insert({
-                    "message": msg.content.toString()
-                });
-            }, { noAck: true });
-
-            console.log("Connection succesful");
-        });
-    } catch (err) {
-        console.log('Error Conectando Cola...' + err);
-    }
-});
-*/
-
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
 app.use(allowCrossDomain);
 
-refundRouter = require('./src/routes/refundRouter')(db, cadQueue);
-app.use('/accounting/api', refundRouter);
+orderRouter = require('./src/routes/orderRouter')(db, cadQueue);
+app.use('/accounting/api', orderRouter);
 
 app.listen(port, function(err) {
     console.log('Running Server on Port ' + port);

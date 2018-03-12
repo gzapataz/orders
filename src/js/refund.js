@@ -1,6 +1,6 @@
 /*jshint esversion: 6 */
 
-class Refund {
+class Order {
     constructor(id, orderid, amount) {
         this.id = id;
         this.orderid = orderid
@@ -20,4 +20,4 @@ class Order {
 };
 
 
-module.exports = Refund;
+module.exports = Order;

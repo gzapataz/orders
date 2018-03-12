@@ -1,7 +1,7 @@
 {
-    "name": "msrefundsrv",
+    "name": "msordersrv",
     "description": "Microservicio para reembolsos",
-    "main": "refundmserv.js",
+    "main": "ordermserv.js",
     "authors": [
         "Gabriel Zapata"
     ],

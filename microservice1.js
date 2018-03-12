@@ -37,7 +37,7 @@ datos.get('/microservicio1/:message', function(req, res) {
     });    
 });
 
-datos.post('/microservicio1/refund', function(req, res) {
+datos.post('/microservicio1/order', function(req, res) {
     amqp.connect('amqp://test:test@' + process.env.API_QUEUE + ':5672', function(err, conn) {
         conn.createChannel(function(err, ch) {
             var q = 'test';
