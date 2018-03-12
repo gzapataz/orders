@@ -15,6 +15,7 @@ class Order {
     save(callback) {
         var result = {};
         var recId;
+        console.log('Creando Orden ...');
         pool.query('INSERT INTO "Order" ' +
             '(customerid, ordernumber, date, status, correlationid) VALUES($1, $2, $3, $4, $5)  RETURNING id;', [this.customerid, this.ordernumber, this.date, this.status, this.correlationid],
             function(err, result) {

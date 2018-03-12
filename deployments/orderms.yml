@@ -27,7 +27,7 @@ spec:
         imagePullPolicy: IfNotPresent
         env:
           - name: API_QUEUE
-            value: "192.168.50.4"
+            value: "ec2-18-221-227-247.us-east-2.compute.amazonaws.com"
         ports:
         - containerPort: 3010
       dnsPolicy: ClusterFirst
