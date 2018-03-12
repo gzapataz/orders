@@ -82,7 +82,7 @@ var orderController = function(db, cad) {
 
     function process(request, itemsToOrder, callback) {
         console.log('Datos de La Orden JSON:', JSON.stringify(request))
-        var order = new Order.Order(null, request.Order.customerid, request.Order.ordernumber, request.Order.date, request.HeaderData.correlationid);
+        var order = new Order.Order(null, request.Order.customerid, request.Order.ordernumber, request.Order.date, request.HeaderData.correlationId);
         console.log('process.creando orden:' + JSON.stringify(order));
         order.save(function(result) {
             //Aqui los items y calculo del total

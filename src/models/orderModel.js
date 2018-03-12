@@ -20,7 +20,7 @@ class Order {
             '(customerid, ordernumber, date, status, correlationid) VALUES($1, $2, $3, $4, $5)  RETURNING id;', [this.customerid, this.ordernumber, this.date, this.status, this.correlationid],
             function(err, result) {
                 if (err) {
-                    console.log(err);
+                    console.log('Entro a Error' + err);
                     callback();
                 }
                 if (result) {
@@ -35,6 +35,10 @@ class Order {
                         console.log('Inicnado Callback: ' + JSON.stringify(result));
                         callback(result);
                     });
+                }
+                else {
+                    console.log('RESULT VACIO:');
+                    callback();
                 }
             });
     }
