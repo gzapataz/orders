@@ -4,19 +4,20 @@ var pgPool = require('../js/pgPool');
 const pool = pgPool.getPool();
 
 class Refund {
-    constructor(id, orderid, amount) {
+    constructor(id, orderid, amount, correlationid) {
         this.id = id;
         this.orderid = orderid
         this.amount = amount;
         this.banktrxid = 'Pending';
         this.estado = 'En proceso';
+        this.correlationid = correlationid;
     }
     save(callback) {
         var result = {};
         var recId;
         console.log('this.amount:' + this.amount);
         pool.query('INSERT INTO "Refund" ' +
-            '(orderid, amount, tax, status, bantrxid) VALUES($1, $2, $3, $4, $5)  RETURNING id;', [this.orderid, this.amount, 0, this.estado, this.banktrxid],
+            '(orderid, amount, tax, status, bantrxid, correlationid) VALUES($1, $2, $3, $4, $5, $6)  RETURNING id;', [this.orderid, this.amount, 0, this.estado, this.banktrxid, this.correlationid],
             function(err, result) {
                 if (err) {
                     console.log(err);
@@ -35,9 +36,24 @@ class Refund {
                         callback(result);
                     });
                 }
-
-
             });
+    }
+    cancelCompensation(correlationid, callback) {
+        console.log('cancelCompensation.req.body.correlationId:' + correlationid);
+        var query = 'update "Refund" set status = \'Cancelado\' where correlationid = \'' + correlationid + '\'';
+        pool.query(query, function(err, result) {
+            if (err) {
+                console.log('ERROR:' + err);
+                callback(err, null);
+            }
+            console.log('DATAREFUND:' + JSON.stringify(result));
+            if (result.rowCount > 0) {
+                callback(null, result);
+            } else {
+                console.log('ERROR NO DATA:' + err);
+                callback(err, null);
+            }
+        });
     }
 }
 

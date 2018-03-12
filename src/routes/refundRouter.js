@@ -13,6 +13,9 @@ var router = function(db, cadQueue) {
     refundRouter.route('/refund')
         .get(refundController.get)
         .post(refundController.post);
+    refundRouter.route('/refundcompensar')
+        .get(refundController.get)
+        .post(refundController.post);
     return refundRouter;
 };
 

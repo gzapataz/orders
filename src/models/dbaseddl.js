@@ -10,7 +10,7 @@ pool.query(
     'DROP TABLE IF EXISTS "Orderitem";' +
     'CREATE TABLE "Orderitem"(id SERIAL PRIMARY KEY, orderid SERIAL, productid SERIAL, quantity integer, unitprice money, tax money, linetotal money);' +
     'DROP TABLE IF EXISTS "Refund";' +
-    'CREATE TABLE "Refund"(id SERIAL PRIMARY KEY, orderid SERIAL, amount money, tax money, bantrxid VARCHAR(30), status VARCHAR(30));' +
+    'CREATE TABLE "Refund"(id SERIAL PRIMARY KEY, orderid SERIAL, amount money, tax money, bantrxid VARCHAR(30), status VARCHAR(30), correlationid VARCHAR(50));' +
     'DROP TABLE IF EXISTS "ItemsToRefund";' +
     'CREATE TABLE "ItemsToRefund"(id SERIAL PRIMARY KEY, refundid SERIAL, lineitemid SERIAL, productid SERIAL, quantity integer, unitprice money, tax money, linetotal money);',
     function(err, res) {
