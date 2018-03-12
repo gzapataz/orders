@@ -3,14 +3,14 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    run: accountms-svc
-  name: accountms-svc
+    run: orderms-svc
+  name: orderms-svc
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: accountms-svc
+      run: orderms-svc
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -19,11 +19,11 @@ spec:
   template:
     metadata:
       labels:
-        run: accountms-svc
+        run: orderms-svc
     spec:
       containers:
-      - name: accountms-svc
-        image: docker.io/gzapataz/accountms
+      - name: orderms-svc
+        image: docker.io/gzapataz/orderms
         imagePullPolicy: IfNotPresent
         env:
           - name: API_QUEUE
@@ -37,8 +37,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    run: accountms-svc
-  name: accountms-svc
+    run: orderms-svc
+  name: orderms-svc
   namespace: default
 spec:
   ports:
@@ -46,6 +46,6 @@ spec:
     protocol: TCP
     targetPort: 5000 
   selector:
-    run: accountms-svc
+    run: orderms-svc
   sessionAffinity: None
   type: LoadBalancer
