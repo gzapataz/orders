@@ -24,13 +24,13 @@ class Order {
                     callback();
                 }
                 if (result) {
+                    console.log('BUSCAR Objet : ');
                     recId = result.rows[0].id;
                     console.log('BUSCAR Objet: ' + recId);
                     pool.query('select * from "Order" where id = $1', [recId], function(err, result) {
                         if (err) {
-                            console.log(err);
+                            console.log('RETORNANDO EN:' + err);
                             callback();
-                            return res.status(500).json({ success: false, data: err });
                         }
                         console.log('Inicnado Callback: ' + JSON.stringify(result));
                         callback(result);
